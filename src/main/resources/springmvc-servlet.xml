@@ -1,0 +1,86 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:task="http://www.springframework.org/schema/task"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/task
+           http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+    <mvc:annotation-driven/>
+<!--    <mvc:default-servlet-handler/>-->
+<!--    static resources-->
+    <mvc:resources mapping="/swagger/**" location="/swagger/"/>
+    <mvc:resources mapping="/cv/**" location="/cv/"/>
+    <mvc:resources mapping="/js/**" location="/js/"/>
+    <mvc:resources mapping="/css/**" location="/css/"/>
+    <mvc:resources mapping="/img/**" location="/img/"/>
+    <mvc:resources mapping="/layui/**" location="/layui/"/>
+    <mvc:resources mapping="/courses/**" location="/courses/"/>
+    <mvc:resources mapping="/apis/**" location="/apis/"/>
+    <mvc:resources mapping="/monaco-editor/**" location="/monaco-editor/"/>
+    <mvc:resources location="/index.html" mapping="/index.html"/>
+    <mvc:resources location="/reg.html" mapping="/reg.html"/>
+    <mvc:resources mapping="/blockly/**" location="/blockly/"/>
+    <mvc:resources mapping="/cvMobile/**" location="/cvMobile/"/>
+
+    <context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true"/>
+
+    <context:component-scan base-package="edu.uestc.cv.*"/>
+    <bean class="edu.uestc.cv.config.SwaggerConfig"/>
+    <bean id="irViewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/AIEducation/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--&lt;!&ndash;shiro限制权限 因此不需要interceptor控制&ndash;&gt;-->
+    <!--<mvc:interceptors>-->
+    <!--<mvc:interceptor>-->
+    <!--<mvc:mapping path="/apiManagement/**"/>-->
+    <!--&lt;!&ndash;<mvc:mapping path="/user/**"/>&ndash;&gt;-->
+    <!--<bean class="edu.uestc.cv.interceptor.LoginInterceptor"></bean>-->
+    <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+<!--mongodb config file-->
+    <import resource="mongodb-context.xml"/>
+    <import resource="applicationContext-shiro.xml"/>
+
+    <!-- 文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="209715200"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="resolveLazily" value="true"/>
+    </bean>
+    <!--启用shiro注解 -->
+    <bean
+            class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+            depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+    <bean
+            class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <!-- shiro抛出未授权  控制器异常处理 -->
+    <bean id="exceptionHandlerExceptionResolver"
+          class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
+    </bean>
+<!--    <bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">-->
+<!--        <property name="locations">-->
+<!--            <list>-->
+<!--                <value>classpath:file.properties</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+    <bean class="edu.uestc.cv.exception.DefaultExceptionHandler"/>
+</beans>

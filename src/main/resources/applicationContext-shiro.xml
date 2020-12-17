@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <description>apache shiro配置</description>
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!--        <property name="loginUrl" value="/"/>-->
+        <property name="filters">
+            <map>
+                <entry key="authc" value-ref="loginFilter"/>
+                <entry key="logout" value-ref="logoutFilter"/>
+            </map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- 登录页允许访问 -->
+                /index.html = anon
+                /swagger-ui.html = anon
+                /swagger-resources = anon
+                /v2/api-docs = anon
+                /webjars/springfox-swagger-ui/** = anon
+                /login = anon
+                /logout = logout
+                /login/getCurrentUser = anon
+                /reg.html = anon
+                /auth/** = anon
+                /register = anon
+                / = anon
+                <!--HQC 接口测试-->
+                /test/Mocklogin = anon
+                /user/add = anon
+                /test/training/uploadFile = anon
+                /picture/uploadPictureFile = anon
+                /picture/PictureRecognition = anon
+                /picture/checkPictureFile = anon
+                /picture/uploadRecognitionPicture = anon
+                /picture/PreviewPictureRecordFile = anon
+
+
+                <!--资源解析接口开放访问-->
+                /api/get = anon
+                /api/post = anon
+
+                <!-- 静态资源允许访问 -->
+                /js/** = anon
+                /css/** = anon
+                /img/** = anon
+                /swagger/** = anon
+                /layui/** = anon
+                /monaco-editor/** = anon
+                /blockly/ = anon
+                /AIEduMobile/** = anon
+
+
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+    <bean id="loginFilter" class="edu.uestc.cv.filter.ShiroLoginFilter"/>
+    <bean id="logoutFilter" class="edu.uestc.cv.filter.ShiroLogoutFilter"/>
+
+
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator"
+          class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    <!-- 会话Cookie模板 关闭浏览器立即失效 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg name="name" value="shiro.sesssion"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="-1"/>
+    </bean>
+    <!-- 会话DAO -->
+    <bean id="sessionDAO"
+          class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    <!-- 会话验证调度器，每30分钟执行一次验证 ，设定会话超时及保存 -->
+    <bean name="sessionValidationScheduler"
+          class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+        <property name="interval" value="1800000"/>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+    <!-- 会话管理器 -->
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 全局会话超时时间（单位毫秒），默认30分钟 -->
+        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="sessionIdCookieEnabled" value="true"/>
+        <property name="sessionIdCookie" ref="sessionIdCookie"/>
+    </bean>
+
+    <bean id="shiroAuthorizingRealm" class="edu.uestc.cv.realm.DatabaseRealm">
+        <property name="authorizationCacheName" value="shiro-authorizationCache"/>
+        <!--         <property name="cacheManager" ref="shiroEhcacheManager"/> -->
+    </bean>
+
+    <!-- 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="shiroAuthorizingRealm"/>
+        <property name="sessionManager" ref="sessionManager"/>
+        <!--         cacheManager,集合spring缓存工厂 -->
+        <!--     <property name="cacheManager" ref="shiroEhcacheManager" /> -->
+        <!--         <property name="sessionManager" ref="sessionManager" /> -->
+    </bean>
+
+
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+
+    <!-- Shiro生命周期处理器 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+
+</beans>
