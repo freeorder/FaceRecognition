@@ -5,7 +5,7 @@
 服务器：121.48.163.57
 端口：40404
 用户名：cv
-密码：cvgo2urlife
+密码：*****
 
 服务器tomact：/usr/local/tomact/apache-tomcat-9.0.40/
 
