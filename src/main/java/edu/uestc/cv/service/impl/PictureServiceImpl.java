@@ -1,10 +1,14 @@
 package edu.uestc.cv.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import edu.uestc.cv.entity.Picture;
 import edu.uestc.cv.entity.PictureUploadResult;
 import edu.uestc.cv.entity.User;
 import edu.uestc.cv.exception.NotExistException;
 import edu.uestc.cv.service.PictureService;
+import edu.uestc.cv.util.HttpUtil;
+import edu.uestc.cv.util.PictureUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -45,20 +49,33 @@ public class PictureServiceImpl implements PictureService {
         return picture;
     }
     @Override
-    public Picture pictureFileRecognition(File file) {//预览图片
+    //模型返回数据形式 "{\"label\":\"867\",\"name\":\"Vladimir_Spidla\"}\n"
+    public Picture pictureFileRecognition(File file,String pictureName,String pictureUrl) {//识别
         Picture picture = new Picture();
-
+        String urlPart = "http://localhost:5010/predict?path=upload/";
+        String name = null,result=null;
         try {
-            //保存返回的识别照片
-            String recognitionReturn = System.getProperty("rootPath") + "recognitionPictureSave"+File.separator;
+            //保存识别照片
+            String recognitionReturn = PictureUtil.pictureSaveUrl+File.separator;
             File directory = new File(recognitionReturn);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
-            //picture.setPicturePath(recognitionReturn+File.separator+file.getName());
+            //发送get请求
+            result=HttpUtil.sendGet3(urlPart+pictureName);
+
+            //字符串处理
+            //JSONObject obj= JSON.parseObject(result);
+            //String name = obj.get("name").toString();
+            String str = result.replaceAll("\\\\","");
+            str = str.replaceAll("\n","");
+            JSONObject obj= JSON.parseObject(str);
+            name = obj.get("name").toString();
+
+            //String name = "张三";//测试用
+            picture.setPicturePath(recognitionReturn+File.separator+file.getName());
             picture.setFile(file);
-            picture.setName("张三");
-            picture.setNumber("1234567");//模型完毕前暂设为定值
+            picture.setName(name);
             //进行识别之后删除保存的照片
             /*if (file.exists()) {
                 file.delete();
@@ -124,8 +141,10 @@ public class PictureServiceImpl implements PictureService {
             return pictureUploadResult;
         }
 
+        //常规保存路径
+        //String recognitionPictureSave = System.getProperty("rootPath") + "recognitionPictureSave" + File.separator;
+        String recognitionPictureSave = PictureUtil.pictureSaveUrl + File.separator;
 
-        String recognitionPictureSave = System.getProperty("rootPath") + "recognitionPictureSave" + File.separator;
         File directory = new File(recognitionPictureSave);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -215,7 +234,7 @@ public class PictureServiceImpl implements PictureService {
                             .format(new Date());*//*
 
             //生成对应的文件夹
-            String filePath = System.getProperty("rootPath") + "recognitionPictureSave";
+            String filePath = PictureUtil.pictureSaveUrl;
             String dirPath=filePath*//*+dateDir*//*;
             //判断是否存在
             File file=new File(dirPath);

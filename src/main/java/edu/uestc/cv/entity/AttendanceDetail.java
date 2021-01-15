@@ -7,14 +7,23 @@ import java.util.Date;
  **/
 public class AttendanceDetail {
     private String id;//数据中的id是自动随机生成的，每个用户都有自己唯一的id
-    private String number;//用户登陆编号
-    private Date date;//考勤日期
+    private int day;//出勤当天号数
+    private int attentdanceStatus;//出勤状态
+    private int leaveStatus;//离岗状态
+    private Date attendanceDate;//出勤时间
+    private Date leaveDate;//离岗时间
     private String record;//备注
 
-    public AttendanceDetail(String id, String number, Date date, String record) {
+    public AttendanceDetail() {
+    }
+
+    public AttendanceDetail(String id, int day, int attentdanceStatus, int leaveStatus, Date attendanceDate, Date leaveDate, String record) {
         this.id = id;
-        this.number = number;
-        this.date = date;
+        this.day = day;
+        this.attentdanceStatus = attentdanceStatus;
+        this.leaveStatus = leaveStatus;
+        this.attendanceDate = attendanceDate;
+        this.leaveDate = leaveDate;
         this.record = record;
     }
 
@@ -26,20 +35,44 @@ public class AttendanceDetail {
         this.id = id;
     }
 
-    public String getNumber() {
-        return number;
+    public int getDay() {
+        return day;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setDay(int day) {
+        this.day = day;
     }
 
-    public Date getDate() {
-        return date;
+    public int getAttentdanceStatus() {
+        return attentdanceStatus;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setAttentdanceStatus(int attentdanceStatus) {
+        this.attentdanceStatus = attentdanceStatus;
+    }
+
+    public int getLeaveStatus() {
+        return leaveStatus;
+    }
+
+    public void setLeaveStatus(int leaveStatus) {
+        this.leaveStatus = leaveStatus;
+    }
+
+    public Date getAttendanceDate() {
+        return attendanceDate;
+    }
+
+    public void setAttendanceDate(Date attendanceDate) {
+        this.attendanceDate = attendanceDate;
+    }
+
+    public Date getLeaveDate() {
+        return leaveDate;
+    }
+
+    public void setLeaveDate(Date leaveDate) {
+        this.leaveDate = leaveDate;
     }
 
     public String getRecord() {
@@ -54,8 +87,11 @@ public class AttendanceDetail {
     public String toString() {
         return "AttendanceDetail{" +
                 "id='" + id + '\'' +
-                ", number='" + number + '\'' +
-                ", date=" + date +
+                ", day=" + day +
+                ", attentdanceStatus=" + attentdanceStatus +
+                ", leaveStatus=" + leaveStatus +
+                ", attendanceDate=" + attendanceDate +
+                ", leaveDate=" + leaveDate +
                 ", record='" + record + '\'' +
                 '}';
     }

@@ -14,7 +14,7 @@ import java.util.List;
 public interface PictureService {
     //员工照片识别
     Picture pictureRecognition(MultipartFile file);
-    Picture pictureFileRecognition(File file);
+    Picture pictureFileRecognition(File file,String pictureName,String pictureUrl);
     //mock上传自己的图片文件
     String upload(String id, MultipartFile file);
     //上传待识别的照片

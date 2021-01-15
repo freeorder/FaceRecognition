@@ -34,6 +34,7 @@
                 /test/Mocklogin = anon
                 /user/add = anon
                 /test/training/uploadFile = anon
+                /picture/** = anon
                 /picture/uploadPictureFile = anon
                 /picture/PictureRecognition = anon
                 /picture/checkPictureFile = anon

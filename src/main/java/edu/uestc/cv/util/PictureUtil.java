@@ -11,6 +11,10 @@ import java.io.OutputStream;
  * create by HQC on 2020/11/29 23:40
  **/
 public class PictureUtil {
+    //识别图片在服务上保存位置
+    //public static String pictureSaveUrl = System.getProperty("rootPath") + "recognitionPictureSave";
+    public static String pictureSaveUrl = "/home/cv/arcface_master/upload/";
+
 
     /**
      * MultipartFile 转 File

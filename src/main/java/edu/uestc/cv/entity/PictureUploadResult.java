@@ -29,6 +29,24 @@ public class PictureUploadResult {
     private String height;
     private Integer state; // 0 表示未识别，1代表已识别
     private Date RecognitionTime;
+    private String staffName;//识别后返回识别的员工姓名
+    private String label;//识别后返回的照片标签
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     public String getPictureName() {
         return pictureName;

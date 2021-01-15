@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class Picture {
 
     private String id;
-
+    //工号
     private String number;
     //图片按照路径保存
     private String picturePath;
